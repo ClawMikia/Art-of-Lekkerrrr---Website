@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Art of Lekkerrrr - Rock Paper Scissors</title>
+<link rel="icon" href="assets/web_icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --cyan:#00FFFF;--magenta:#FF69B4;--lime:#32CD32;--dark:#142e14;
+  --card:#142e14;--border:rgba(255,255,255,0.08);--font:'Comic Neue',cursive,sans-serif;
+}
+html{font-size:16px;scroll-behavior:smooth;background:#142e14 url('assets/background.png') no-repeat center center fixed;background-size:cover}
+body{font-family:var(--font);background:url('assets/background.png') no-repeat center center fixed;background-size:cover;color:#c0c8b8;min-height:100vh;overflow-x:hidden}
+.main{max-width:1200px;margin:0 auto;padding:1.5rem}
+@keyframes drawerEnter{from{opacity:0;transform:translateY(50px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideInRight{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bounceIn{0%{opacity:0;transform:scale(0.3)}50%{opacity:1;transform:scale(1.06)}70%{transform:scale(0.96)}100%{transform:scale(1)}}
+@keyframes iconPulse{0%,100%{box-shadow:0 0 0 0 rgba(0,255,255,0.3)}50%{box-shadow:0 0 0 8px rgba(0,255,255,0)}}
+.hero{text-align:center;padding:2.2rem 1rem 1.2rem;border-radius:14px;background:var(--card);margin-bottom:1.2rem;position:relative;overflow:hidden;border:1px solid var(--border);animation:drawerEnter 0.7s cubic-bezier(0.16,1,0.3,1) both}
+.hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent 5%,var(--magenta) 30%,var(--cyan) 70%,transparent 95%);opacity:0.5}
+.hero h1{font-size:clamp(1.5rem,4vw,2.6rem);font-weight:700;text-transform:uppercase;letter-spacing:2px;background:linear-gradient(135deg,var(--cyan),var(--magenta));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.2rem;animation:slideInLeft 0.6s cubic-bezier(0.16,1,0.3,1) 0.2s both}
+.hero .subtitle{font-size:0.95rem;color:var(--lime);animation:slideInRight 0.6s cubic-bezier(0.16,1,0.3,1) 0.35s both}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.3rem;margin-bottom:0.9rem;opacity:0;transform:translateY(30px);transition:opacity 0.5s ease,transform 0.5s cubic-bezier(0.16,1,0.3,1)}
+.card.revealed{opacity:1;transform:translateY(0)}
+.card-head{display:flex;align-items:center;gap:0.4rem;margin-bottom:0.7rem;padding-bottom:0.35rem;border-bottom:1px solid var(--border)}
+.card-head .icon{width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:5px;font-size:0.8rem;animation:iconPulse 3s ease-in-out infinite}
+.card-head .icon.cyan{background:rgba(0,255,255,0.1);color:var(--cyan)}
+.card-head .icon.magenta{background:rgba(255,105,180,0.1);color:var(--magenta)}
+.card-head .icon.lime{background:rgba(50,205,50,0.1);color:var(--lime)}
+.card-title{font-size:1rem;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--cyan)}
+.card-title.magenta{color:var(--magenta)}.card-title.lime{color:var(--lime)}
+.rules-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.7rem}
+.rule-card{background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:7px;padding:0.8rem;text-align:center;transition:all 0.3s ease;opacity:0;transform:translateY(15px)}
+.rule-card.revealed{opacity:1;transform:translateY(0);transition:opacity 0.4s ease,transform 0.4s ease}
+.rule-card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,0.15);box-shadow:0 8px 24px rgba(0,0,0,0.3)}
+.rule-card .emoji{font-size:1.8rem;margin-bottom:0.25rem;transition:transform 0.3s}
+.rule-card:hover .emoji{transform:scale(1.15)}
+.rule-card h3{color:var(--lime);font-size:0.88rem;margin-bottom:0.2rem}
+.rule-card p{color:#999;font-size:0.8rem;line-height:1.4}
+.rule-card.win{border-left:2px solid var(--lime)}.rule-card.lose{border-left:2px solid var(--magenta)}.rule-card.tie{border-left:2px solid var(--cyan)}
+.drawer-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.3rem;margin-bottom:0.9rem;position:relative;overflow:hidden;animation:drawerEnter 0.7s cubic-bezier(0.16,1,0.3,1) both}
+.drawer-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--cyan),var(--magenta),var(--lime));opacity:0.5;border-radius:14px 14px 0 0}
+.drawer-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,255,255,0.12),transparent)}
+.drawer-card .card-head{animation:slideInLeft 0.5s ease 0.3s both}
+.drawer-section{opacity:0;transform:translateY(16px);animation:fadeSlideUp 0.5s ease both}
+.drawer-section:nth-child(1){animation-delay:0.35s}.drawer-section:nth-child(2){animation-delay:0.5s}.drawer-section:nth-child(3){animation-delay:0.65s}.drawer-section:nth-child(4){animation-delay:0.8s}
+.drawer-label{font-size:0.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--cyan);margin-bottom:0.4rem;font-weight:700;display:flex;align-items:center;gap:0.4rem}
+.drawer-label::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);display:inline-block;animation:iconPulse 2s ease-in-out infinite}
+.drawer-label.lime-label{color:var(--lime)}.drawer-label.lime-label::before{background:var(--lime);box-shadow:0 0 8px var(--lime)}
+.gesture-selector{display:flex;gap:0.35rem;flex-wrap:wrap;margin-bottom:0.6rem}
+.gesture-btn{flex:1;min-width:100px;padding:0.6rem 0.3rem;border:1px solid var(--border);border-radius:8px;background:rgba(0,0,0,0.25);color:#999;font-family:var(--font);font-size:0.85rem;font-weight:700;cursor:pointer;transition:all 0.25s ease;text-transform:uppercase}
+.gesture-btn.revealed{transition:all 0.25s ease}
+.gesture-btn:hover{border-color:var(--cyan);color:var(--cyan);transform:translateY(-2px)}
+.gesture-btn.selected{border-color:var(--lime);color:var(--lime);background:rgba(50,205,50,0.06);box-shadow:0 0 12px rgba(50,205,50,0.1)}
+.variant-chips{display:flex;gap:0.25rem;margin-bottom:0.6rem;flex-wrap:wrap}
+.chip{flex:1;min-width:85px;padding:0.45rem;border:1px solid var(--border);border-radius:18px;background:transparent;color:#888;font-family:var(--font);font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.25s ease;text-transform:uppercase;text-align:center}
+.chip.revealed{transition:all 0.25s ease}
+.chip:hover{border-color:var(--magenta);color:var(--magenta);transform:translateY(-2px)}
+.chip.selected{border-color:var(--cyan);color:var(--cyan);background:rgba(0,255,255,0.04);box-shadow:0 0 10px rgba(0,255,255,0.08)}
+.figure-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(85px,1fr));gap:0.5rem;margin-bottom:0.6rem;justify-content:center}
+.figure-card{aspect-ratio:1;border:1px solid var(--border);border-radius:10px;background:rgba(0,0,0,0.25);cursor:pointer;overflow:hidden;transition:all 0.3s ease;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0.2rem;min-width:75px}
+.figure-card.revealed{transition:all 0.3s ease}
+.figure-card:hover{border-color:var(--magenta);transform:translateY(-4px);box-shadow:0 10px 30px rgba(0,0,0,0.5),0 0 20px rgba(255,105,180,0.15)}
+.figure-card.selected{border-color:var(--lime);background:rgba(50,205,50,0.06);box-shadow:0 0 16px rgba(50,205,50,0.15)}
+.figure-card img{width:100%;height:78%;object-fit:contain}
+.figure-card .fig-label{font-size:0.55rem;color:#888}
+.action-btn{display:inline-flex;align-items:center;justify-content:center;gap:0.4rem;padding:0.65rem 1.6rem;border:1px solid var(--cyan);border-radius:8px;font-family:var(--font);font-size:0.9rem;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:0.8px;transition:all 0.3s ease;color:var(--cyan);background:rgba(0,255,255,0.04);position:relative;overflow:hidden}
+.action-btn.revealed{transition:all 0.3s ease}
+.action-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,255,255,0.12),transparent);opacity:0;transition:opacity 0.3s}
+.action-btn:hover:not(:disabled){background:rgba(0,255,255,0.12);box-shadow:0 0 25px rgba(0,255,255,0.12)}
+.action-btn:hover:not(:disabled)::before{opacity:1}
+.action-btn:hover:not(:disabled){transform:translateY(-1px)}
+.action-btn:disabled{opacity:0.3;cursor:not-allowed}
+.action-btn[aria-disabled="true"]{opacity:0.3;cursor:not-allowed}
+.gesture-btn[aria-disabled="true"],.chip[aria-disabled="true"]{opacity:0.3;cursor:not-allowed}
+.action-btn.reset{border-color:var(--magenta);color:var(--magenta);background:rgba(255,105,180,0.04)}
+.action-btn.reset::before{background:linear-gradient(135deg,rgba(255,105,180,0.12),transparent)}
+.action-btn.reset:hover:not(:disabled){background:rgba(255,105,180,0.12);box-shadow:0 0 25px rgba(255,105,180,0.12)}
+.action-btn-group{display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;margin-top:0.8rem}
+.scores{display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;margin-bottom:0.7rem}
+.score-card{text-align:center;padding:0.7rem;border-radius:7px;background:rgba(0,0,0,0.2);border:1px solid var(--border);border-top:2px solid var(--border);transition:transform 0.2s;opacity:0;transform:translateY(10px)}
+.score-card.revealed{opacity:1;transform:translateY(0);transition:opacity 0.4s ease,transform 0.4s ease}
+.score-card:hover{transform:translateY(-2px)}
+.score-card.wins{border-top-color:var(--lime)}.score-card.losses{border-top-color:var(--magenta)}.score-card.ties{border-top-color:var(--cyan)}
+.score-card .label{font-size:0.62rem;text-transform:uppercase;letter-spacing:0.7px;color:#888;margin-bottom:0.1rem}
+.score-card .value{font-size:1.4rem;font-weight:700}
+.score-card.wins .value{color:var(--lime)}.score-card.losses .value{color:var(--magenta)}.score-card.ties .value{color:var(--cyan)}
+/* === Battle Modal === */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(5,15,5,0.82);z-index:200;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.active{display:flex}
+.modal-content{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.6rem;width:80%;transform:scale(0.8);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);position:relative}
+.modal-overlay.active .modal-content{transform:scale(1)}
+#figureModal .modal-content{width:40%}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem;padding-bottom:0.35rem;border-bottom:1px solid var(--border)}
+.modal-close{background:none;border:1px solid var(--border);border-radius:50%;color:#aaa;font-size:1.1rem;cursor:pointer;width:30px;height:30px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;line-height:1}
+.modal-close:hover{border-color:var(--magenta);color:var(--magenta);background:rgba(255,105,180,0.08)}
+.battle-arena{display:flex;align-items:center;justify-content:center;gap:2rem;padding:1.2rem;text-align:center}
+.combatant-card{flex:1;min-width:220px;background:rgba(0,0,0,0.25);border:1px solid var(--border);border-radius:10px;padding:1.6rem}
+.combatant-card.your-side{border-top:2px solid var(--cyan);border-bottom:2px solid var(--cyan)}
+.combatant-card.cpu-side{border-top:2px solid var(--magenta);border-bottom:2px solid var(--magenta)}
+.combatant-card h3{font-size:1.1rem;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:0.8rem}
+.combatant-card.your-side h3{color:var(--cyan)}.combatant-card.cpu-side h3{color:var(--magenta)}
+.hand-display{width:220px;height:220px;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.06);border-radius:5px;background:rgba(0,0,0,0.2)}
+.hand-display img{max-width:90%;max-height:90%}
+.detail{font-size:0.72rem;color:#888;word-break:break-all}
+.vs-badge{font-size:1.8rem;font-weight:700;color:var(--lime);text-transform:uppercase;min-width:60px}
+.result-card{text-align:center;padding:1.5rem;margin:1rem 0 0;border-radius:10px;font-size:1.8rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;border:2px solid;animation:bounceIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both}
+.result-card.win{background:rgba(50,205,50,0.06);border-color:var(--lime);color:var(--lime)}
+.result-card.lose{background:rgba(255,105,180,0.06);border-color:var(--magenta);color:var(--magenta)}
+.result-card.tie{background:rgba(0,255,255,0.06);border-color:var(--cyan);color:var(--cyan)}
+.result-section{display:flex;flex-direction:column;align-items:center;gap:0.8rem}
+.figure-detail-body{text-align:center;padding:1rem 0}
+.figure-detail-body .hand-display{width:280px;height:280px;margin:0 auto 1.2rem}
+.detail-list{display:grid;gap:0.5rem;max-width:320px;margin:0 auto;text-align:left}
+.detail-row{display:flex;justify-content:space-between;align-items:center;padding:0.55rem 0.9rem;background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:6px}
+.detail-label{font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--cyan)}
+.detail-value{font-size:0.85rem;color:#c0c8b8;font-weight:700}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--dark)}
+::-webkit-scrollbar-thumb{background:rgba(0,255,255,0.18);border-radius:3px}
+@media(max-width:900px){.main{padding:1rem}.rules-grid{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}}
+@media(max-width:600px){.hero h1{font-size:1.3rem}.gesture-btn{min-width:70px;font-size:0.75rem;padding:0.45rem 0.2rem}.figure-grid{grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:0.3rem}.combatant-card{min-width:140px;padding:1rem}.hand-display{width:120px;height:120px}.hand-display img{max-width:85%;max-height:85%}.scores{grid-template-columns:1fr 1fr 1fr;gap:0.3rem}.score-card .value{font-size:1.1rem}.card{padding:0.7rem}.drawer-card{padding:0.8rem}.battle-arena{gap:0.8rem;padding:0.8rem;flex-wrap:wrap}.vs-badge{font-size:1.2rem;min-width:40px}.main{padding:0.6rem}.modal-content{padding:1rem;width:80%}.figure-detail-body .hand-display{width:180px;height:180px}.result-card{font-size:1.3rem;padding:0.8rem;margin:0}.combatant-card h3{font-size:0.9rem}.detail{font-size:0.65rem}.result-section{gap:0.5rem}}
+</style>
+</head>
+<body>
+<main class="main" id="main-content">
+  <div class="hero">
+    <h1>Art of Lekkerrrr</h1>
+    <p class="subtitle">Enter the Hero Arena</p>
+  </div>
+
+  <div class="card" data-reveal>
+    <div class="card-head"><div class="icon cyan">&#128221;</div><div class="card-title">Battle Rules</div></div>
+    <div class="rules-grid">
+      <div class="rule-card" data-reveal-delay="0.1"><h3>Rock &#8594; Scissors</h3><p>Rock crushes scissors.</p></div>
+      <div class="rule-card" data-reveal-delay="0.2"><h3>Scissors &#8594; Paper</h3><p>Scissors cuts paper.</p></div>
+      <div class="rule-card" data-reveal-delay="0.3"><h3>Paper &#8594; Rock</h3><p>Paper covers rock.</p></div>
+      <div class="rule-card" data-reveal-delay="0.4"><h3>Same Gesture &#8594; Tie</h3><p>Identical gestures cancel out.</p></div>
+    </div>
+  </div>
+
+  <div class="card" data-reveal>
+    <div class="card-head"><div class="icon lime">&#127912;</div><div class="card-title lime">Hand Variants</div></div>
+    <div class="rules-grid">
+      <div class="rule-card" data-reveal-delay="0.1"><h3>Plain</h3><p>Classic, no-frills hand pose.</p></div>
+      <div class="rule-card" data-reveal-delay="0.2"><h3>Light</h3><p>A bright, luminous variant.</p></div>
+      <div class="rule-card" data-reveal-delay="0.3"><h3>Dark</h3><p>A shadowy, intense variant.</p></div>
+    </div>
+  </div>
+
+  <div class="drawer-card">
+    <div class="card-head"><div class="icon lime">&#9876;</div><div class="card-title lime">Choose Your Hand</div></div>
+    <div class="drawer-section">
+      <div class="drawer-label">Gesture</div>
+      <div class="gesture-selector" id="gestureSelector">
+        <button class="gesture-btn" data-gesture="rock">&#9876; Rock</button>
+        <button class="gesture-btn" data-gesture="paper">&#128214; Paper</button>
+        <button class="gesture-btn" data-gesture="scissor">&#9878; Scissor</button>
+      </div>
+    </div>
+    <div class="drawer-section">
+      <div class="drawer-label">Variant</div>
+      <div class="variant-chips" id="variantSelector">
+        <button class="chip selected" data-variant="plain">Plain</button>
+        <button class="chip" data-variant="light">Light</button>
+        <button class="chip" data-variant="dark">Dark</button>
+      </div>
+    </div>
+    <div class="drawer-section">
+      <div class="drawer-label lime-label">Figure</div>
+      <div class="figure-grid" id="figureGrid"></div>
+    </div>
+    <div class="drawer-section">
+      <div class="action-btn-group">
+        <button class="action-btn" id="btnDetails" type="button">&#128203; Details</button>
+        <button class="action-btn" id="btnPlay" type="button">&#9876; FIGHT!</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-reveal>
+    <div class="card-head"><div class="icon cyan">&#127942;</div><div class="card-title">Scoreboard</div></div>
+    <div class="scores">
+      <div class="score-card wins" data-reveal-delay="0.1"><div class="label">&#127942; Wins</div><div class="value" id="scoreWins">0</div></div>
+      <div class="score-card losses" data-reveal-delay="0.2"><div class="label">&#128148; Losses</div><div class="value" id="scoreLosses">0</div></div>
+      <div class="score-card ties" data-reveal-delay="0.3"><div class="label">&#128170; Ties</div><div class="value" id="scoreTies">0</div></div>
+    </div>
+    <div class="action-btn-group">
+      <button class="action-btn reset" id="btnReset">&#9851; Reset Scores</button>
+    </div>
+  </div>
+</main>
+
+  <!-- Figure Details Modal -->
+  <div class="modal-overlay" id="figureModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="card-title cyan">Figure Details</h2>
+        <button class="modal-close" id="figureModalClose">&times;</button>
+      </div>
+      <div class="figure-detail-body">
+        <div class="hand-display" id="detailImg"></div>
+        <div class="detail-list" id="detailList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Battle Modal -->
+<div class="modal-overlay" id="battleModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="card-title magenta">Battle Result</h2>
+      <button class="modal-close" id="modalClose">&times;</button>
+    </div>
+    <div class="battle-arena">
+      <div class="combatant-card your-side">
+        <h3>You</h3>
+        <div class="hand-display" id="playerImg"><span style="color:#555">--</span></div>
+        <div class="detail" id="playerLabel"></div>
+      </div>
+      <div class="vs-badge">VS</div>
+      <div class="combatant-card cpu-side">
+        <h3>CPU</h3>
+        <div class="hand-display" id="cpuImg"><span style="color:#555">--</span></div>
+        <div class="detail" id="cpuLabel"></div>
+      </div>
+    </div>
+    <div class="result-section">
+      <div class="result-card" id="resultBubble"></div>
+      <div class="action-btn-group">
+        <button class="action-btn" id="btnPlayAgain">&#9876; Play Again</button>
+        <button class="action-btn reset" id="btnResetModal">&#9851; Reset Scores</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var gestures=['rock','paper','scissor'];
+  var variants=['plain','light','dark'];
+  var NUM_FIGURES=12;
+  function getImagePath(type,variant,fig){return 'assets/'+type+'/'+variant+'/'+type+' ('+fig+').png'}
+  var state={gesture:'rock',variant:'plain',figure:1,scores:{wins:0,losses:0,ties:0}};
+
+  var gestureBtns=document.querySelectorAll('.gesture-btn');
+  var variantChips=document.querySelectorAll('.chip');
+  var figureGrid=document.getElementById('figureGrid');
+  var btnPlay=document.getElementById('btnPlay');
+  // === Battle Modal ===
+  var battleModal=document.getElementById('battleModal');
+  var resultBubble=document.getElementById('resultBubble');
+  var playerImg=document.getElementById('playerImg');
+  var cpuImg=document.getElementById('cpuImg');
+  var playerLabel=document.getElementById('playerLabel');
+  var cpuLabel=document.getElementById('cpuLabel');
+  var scoreWins=document.getElementById('scoreWins');
+  var scoreLosses=document.getElementById('scoreLosses');
+  var scoreTies=document.getElementById('scoreTies');
+  var btnReset=document.getElementById('btnReset');
+  var btnResetModal=document.getElementById('btnResetModal');
+  var btnPlayAgain=document.getElementById('btnPlayAgain');
+  var modalClose=document.getElementById('modalClose');
+  var btnDetails=document.getElementById('btnDetails');
+  var figureModal=document.getElementById('figureModal');
+  var figureModalClose=document.getElementById('figureModalClose');
+  var detailImg=document.getElementById('detailImg');
+  var detailList=document.getElementById('detailList');
+  function capitalize(s){return s.charAt(0).toUpperCase()+s.slice(1)}
+
+  function enableAllControls(){
+    [btnPlay,btnDetails,btnReset,btnResetModal,btnPlayAgain,modalClose,figureModalClose].forEach(function(el){
+      if(el){
+        el.disabled=false;
+        el.removeAttribute('disabled');
+        el.setAttribute('aria-disabled','false');
+      }
+    });
+    gestureBtns.forEach(function(btn){
+      btn.disabled=false;
+      btn.removeAttribute('disabled');
+      btn.setAttribute('aria-disabled','false');
+    });
+    variantChips.forEach(function(chip){
+      chip.disabled=false;
+      chip.removeAttribute('disabled');
+      chip.setAttribute('aria-disabled','false');
+    });
+    document.querySelectorAll('.figure-card').forEach(function(card){
+      card.setAttribute('aria-disabled','false');
+      card.style.pointerEvents='auto';
+      card.style.opacity='1';
+    });
+  }
+
+  function syncSelectionUI(){
+    gestureBtns.forEach(function(btn){
+      btn.classList.toggle('selected', btn.dataset.gesture===state.gesture);
+    });
+    variantChips.forEach(function(chip){
+      chip.classList.toggle('selected', chip.dataset.variant===state.variant);
+    });
+  }
+
+  function renderFigures(){
+    figureGrid.innerHTML='';
+    syncSelectionUI();
+    enableAllControls();
+    btnPlay.removeAttribute('disabled');
+    for(var i=1;i<=NUM_FIGURES;i++){
+      (function(n){
+        var card=document.createElement('div');
+        card.className='figure-card';
+        card.setAttribute('data-type',state.gesture);
+        card.setAttribute('data-variant',state.variant);
+        card.setAttribute('data-figure',n);
+        if(n===state.figure) card.classList.add('selected');
+        var img=document.createElement('img');
+        img.src=getImagePath(state.gesture,state.variant,n);
+        img.alt='Figure '+n;
+        img.onerror=function(){this.style.display='none'};
+        card.appendChild(img);
+        var label=document.createElement('div');
+        label.className='fig-label';
+        label.textContent='#'+n;
+        card.appendChild(label);
+        card.addEventListener('click',function(){state.figure=n;renderFigures();updatePlayButton()});
+        figureGrid.appendChild(card);
+        requestAnimationFrame(function(){requestAnimationFrame(function(){card.classList.add('revealed')})});
+      })(i);
+    }
+  }
+
+  function updatePlayButton(){
+    enableAllControls();
+    btnPlay.disabled=false;
+    btnPlay.removeAttribute('disabled');
+  }
+
+  gestureBtns.forEach(function(btn){
+    btn.addEventListener('click',function(){
+      state.gesture=btn.dataset.gesture;
+      state.figure=1;
+      renderFigures();
+      updatePlayButton();
+    });
+    btn.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' ') {e.preventDefault();btn.click();}});
+  });
+
+  variantChips.forEach(function(chip){
+    chip.addEventListener('click',function(){
+      state.variant=chip.dataset.variant;
+      state.figure=1;
+      renderFigures();
+      updatePlayButton();
+    });
+    chip.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' ') {e.preventDefault();chip.click();}});
+  });
+
+  // === Battle Modal Logic ===
+  function determineWinner(user,cpu){
+    if(user===cpu) return 'tie';
+    if(user==='rock'&&cpu==='scissor') return 'win';
+    if(user==='scissor'&&cpu==='paper') return 'win';
+    if(user==='paper'&&cpu==='rock') return 'win';
+    return 'lose';
+  }
+
+  function showModal(){
+    if(!state.gesture||state.figure===null) return;
+    var cpuGesture=gestures[Math.floor(Math.random()*3)];
+    var cpuVariant=variants[Math.floor(Math.random()*3)];
+    var cpuFigure=Math.floor(Math.random()*NUM_FIGURES)+1;
+    playerImg.innerHTML='<img src="'+getImagePath(state.gesture,state.variant,state.figure)+'" alt="Your hand">';
+    cpuImg.innerHTML='<img src="'+getImagePath(cpuGesture,cpuVariant,cpuFigure)+'" alt="CPU hand">';
+    playerLabel.textContent=capitalize(state.gesture)+' / '+capitalize(state.variant)+' / Fig#'+state.figure;
+    cpuLabel.textContent=capitalize(cpuGesture)+' / '+capitalize(cpuVariant)+' / Fig#'+cpuFigure;
+    var result=determineWinner(state.gesture,cpuGesture);
+    var messages={win:'You Win!',lose:'You Lose!',tie:"It's a Tie!"};
+    resultBubble.textContent=messages[result];
+    resultBubble.className='result-card '+result;
+    battleModal.classList.add('active');
+    if(result==='win') state.scores.wins++;
+    else if(result==='lose') state.scores.losses++;
+    else state.scores.ties++;
+    updateScores();
+  }
+
+  function updateScores(){
+    scoreWins.textContent=state.scores.wins;
+    scoreLosses.textContent=state.scores.losses;
+    scoreTies.textContent=state.scores.ties;
+    document.querySelectorAll('.score-card').forEach(function(c){c.classList.add('revealed')});
+  }
+
+  function resetScores(){
+    state.scores={wins:0,losses:0,ties:0};
+    updateScores();battleModal.classList.remove('active');resetBattle();
+  }
+
+  function resetBattle(){
+    resultBubble.textContent='';resultBubble.className='result-card';
+    playerImg.innerHTML='<span style="color:#555">--</span>';
+    cpuImg.innerHTML='<span style="color:#555">--</span>';
+    playerLabel.textContent='';cpuLabel.textContent='';
+  }
+
+  function playAgain(){
+    battleModal.classList.remove('active');
+    state.gesture='rock';
+    state.variant='plain';
+    state.figure=1;
+    renderFigures();
+    updatePlayButton();
+  }
+
+  function showFigureDetails(){
+    if(!state.gesture||!state.figure) return;
+    detailImg.innerHTML='<img src="'+getImagePath(state.gesture,state.variant,state.figure)+'" alt="Selected figure">';
+    detailList.innerHTML='<div class="detail-row"><span class="detail-label">Gesture</span><span class="detail-value">'+capitalize(state.gesture)+'</span></div>'+
+      '<div class="detail-row"><span class="detail-label">Variant</span><span class="detail-value">'+capitalize(state.variant)+'</span></div>'+
+      '<div class="detail-row"><span class="detail-label">Figure</span><span class="detail-value">#'+state.figure+'</span></div>';
+    figureModal.classList.add('active');
+  }
+
+  // === Event Listeners ===
+  btnPlay.addEventListener('click',function(){
+    updatePlayButton();
+    showModal();
+  });
+  btnDetails.addEventListener('click',showFigureDetails);
+  btnReset.addEventListener('click',resetScores);
+  btnResetModal.addEventListener('click',resetScores);
+  btnPlayAgain.addEventListener('click',playAgain);
+  modalClose.addEventListener('click',function(){battleModal.classList.remove('active')});
+  figureModalClose.addEventListener('click',function(){figureModal.classList.remove('active')});
+  battleModal.addEventListener('click',function(e){if(e.target===battleModal) battleModal.classList.remove('active')});
+  figureModal.addEventListener('click',function(e){if(e.target===figureModal) figureModal.classList.remove('active')});
+
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){
+      battleModal.classList.remove('active');
+      figureModal.classList.remove('active');
+    }
+  });
+
+  var revealObserver=new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){entry.target.classList.add('revealed');revealObserver.unobserve(entry.target)}
+    });
+  },{threshold:0.1,rootMargin:'0px 0px -30px 0px'});
+  document.querySelectorAll('[data-reveal]').forEach(function(el){revealObserver.observe(el)});
+  document.querySelectorAll('[data-reveal-delay]').forEach(function(el){
+    var delay=parseFloat(el.dataset.revealDelay)||0;
+    setTimeout(function(){el.classList.add('revealed')},delay*1000);
+  });
+  enableAllControls();
+  renderFigures();updatePlayButton();updateScores();
+})();
+</script>
+</body>
+</html>
