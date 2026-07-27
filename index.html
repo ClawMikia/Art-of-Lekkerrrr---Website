@@ -347,7 +347,7 @@ body{font-family:var(--font);background:url('assets/background.png') no-repeat c
         label.className='fig-label';
         label.textContent='#'+n;
         card.appendChild(label);
-        card.addEventListener('click',function(){state.figure=n;renderFigures();updatePlayButton()});
+        card.addEventListener('click',function(){state.figure=n;var cards=figureGrid.querySelectorAll('.figure-card');cards.forEach(function(c){c.classList.toggle('selected',parseInt(c.dataset.figure)===n)});updatePlayButton()});
         figureGrid.appendChild(card);
         requestAnimationFrame(function(){requestAnimationFrame(function(){card.classList.add('revealed')})});
       })(i);
