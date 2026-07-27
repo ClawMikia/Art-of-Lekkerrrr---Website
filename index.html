@@ -67,7 +67,6 @@ body{font-family:var(--font);background:url('assets/background.png') no-repeat c
 .figure-card.revealed{transition:all 0.3s ease}
 .figure-card:hover{border-color:var(--magenta);transform:translateY(-4px);box-shadow:0 10px 30px rgba(0,0,0,0.5),0 0 20px rgba(255,105,180,0.15)}
 .figure-card.selected{border-color:var(--lime);background:rgba(50,205,50,0.06);box-shadow:0 0 16px rgba(50,205,50,0.15)}
-.figure-card img{width:100%;height:78%;object-fit:contain}
 .figure-card .fig-label{font-size:0.55rem;color:#888}
 .action-btn{display:inline-flex;align-items:center;justify-content:center;gap:0.4rem;padding:0.65rem 1.6rem;border:1px solid var(--cyan);border-radius:8px;font-family:var(--font);font-size:0.9rem;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:0.8px;transition:all 0.3s ease;color:var(--cyan);background:rgba(0,255,255,0.04);position:relative;overflow:hidden}
 .action-btn.revealed{transition:all 0.3s ease}
@@ -105,8 +104,7 @@ body{font-family:var(--font);background:url('assets/background.png') no-repeat c
 .combatant-card.cpu-side{border-top:2px solid var(--magenta);border-bottom:2px solid var(--magenta)}
 .combatant-card h3{font-size:1.1rem;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:0.8rem}
 .combatant-card.your-side h3{color:var(--cyan)}.combatant-card.cpu-side h3{color:var(--magenta)}
-.hand-display{width:220px;height:220px;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.06);border-radius:5px;background:rgba(0,0,0,0.2)}
-.hand-display img{max-width:90%;max-height:90%}
+.hand-display{width:220px;height:220px;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.06);border-radius:5px;background:rgba(0,0,0,0.2);position:relative;overflow:hidden}
 .detail{font-size:0.72rem;color:#888;word-break:break-all}
 .vs-badge{font-size:1.8rem;font-weight:700;color:var(--lime);text-transform:uppercase;min-width:60px}
 .result-card{text-align:center;padding:1.5rem;margin:1rem 0 0;border-radius:10px;font-size:1.8rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;border:2px solid;animation:bounceIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both}
@@ -115,16 +113,24 @@ body{font-family:var(--font);background:url('assets/background.png') no-repeat c
 .result-card.tie{background:rgba(0,255,255,0.06);border-color:var(--cyan);color:var(--cyan)}
 .result-section{display:flex;flex-direction:column;align-items:center;gap:0.8rem}
 .figure-detail-body{text-align:center;padding:1rem 0}
-.figure-detail-body .hand-display{width:280px;height:280px;margin:0 auto 1.2rem}
-.detail-list{display:grid;gap:0.5rem;max-width:320px;margin:0 auto;text-align:left}
-.detail-row{display:flex;justify-content:space-between;align-items:center;padding:0.55rem 0.9rem;background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:6px}
+.img-overlay{position:relative;display:flex;align-items:center;justify-content:center}
+.hand-display .img-overlay,#detailImg .img-overlay{width:100%;height:100%}
+.img-overlay .spinner{position:absolute;width:36px;height:36px;border:3px solid rgba(255,255,255,0.08);border-top-color:var(--cyan);border-radius:50%;animation:spin 0.6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.img-overlay img{max-width:90%;max-height:90%;opacity:0;transition:opacity 0.3s ease}
+.img-overlay img.loaded{opacity:1}
+.figure-card .img-overlay{width:100%;height:78%;display:flex;align-items:center;justify-content:center}
+.figure-card .img-overlay img{width:100%;height:100%;object-fit:contain;max-width:none;max-height:none}
+.drawer-section{margin-bottom:0.8rem}
+.drawer-section:last-child{margin-bottom:0}
+.drawer-label{margin-bottom:0.45rem}
 .detail-label{font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--cyan)}
 .detail-value{font-size:0.85rem;color:#c0c8b8;font-weight:700}
 ::-webkit-scrollbar{width:5px}
 ::-webkit-scrollbar-track{background:var(--dark)}
 ::-webkit-scrollbar-thumb{background:rgba(0,255,255,0.18);border-radius:3px}
 @media(max-width:900px){.main{padding:1rem}.rules-grid{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}}
-@media(max-width:600px){.hero h1{font-size:1.3rem}.gesture-btn{min-width:70px;font-size:0.75rem;padding:0.45rem 0.2rem}.figure-grid{grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:0.3rem}.combatant-card{min-width:140px;padding:1rem}.hand-display{width:120px;height:120px}.hand-display img{max-width:85%;max-height:85%}.scores{grid-template-columns:1fr 1fr 1fr;gap:0.3rem}.score-card .value{font-size:1.1rem}.card{padding:0.7rem}.drawer-card{padding:0.8rem}.battle-arena{gap:0.8rem;padding:0.8rem;flex-wrap:wrap}.vs-badge{font-size:1.2rem;min-width:40px}.main{padding:0.6rem}.modal-content{padding:1rem;width:80%}.figure-detail-body .hand-display{width:180px;height:180px}.result-card{font-size:1.3rem;padding:0.8rem;margin:0}.combatant-card h3{font-size:0.9rem}.detail{font-size:0.65rem}.result-section{gap:0.5rem}}
+@media(max-width:600px){.hero h1{font-size:1.3rem}.gesture-btn{min-width:70px;font-size:0.75rem;padding:0.45rem 0.2rem}.figure-grid{grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:0.3rem}.combatant-card{min-width:140px;padding:1rem}.hand-display{width:120px;height:120px}.hand-display .img-overlay img{max-width:85%;max-height:85%}.scores{grid-template-columns:1fr 1fr 1fr;gap:0.3rem}.score-card .value{font-size:1.1rem}.card{padding:0.7rem}.drawer-card{padding:0.8rem}.battle-arena{gap:0.8rem;padding:0.8rem;flex-wrap:wrap}.vs-badge{font-size:1.2rem;min-width:40px}.main{padding:0.6rem}.modal-content{padding:1rem;width:80%}.figure-detail-body .hand-display{width:180px;height:180px}.figure-detail-body .hand-display .img-overlay{width:100%;height:100%}.result-card{font-size:1.3rem;padding:0.8rem;margin:0}.combatant-card h3{font-size:0.9rem}.detail{font-size:0.65rem}.result-section{gap:0.5rem}}
 </style>
 </head>
 <body>
@@ -272,6 +278,13 @@ body{font-family:var(--font);background:url('assets/background.png') no-repeat c
   var detailImg=document.getElementById('detailImg');
   var detailList=document.getElementById('detailList');
   function capitalize(s){return s.charAt(0).toUpperCase()+s.slice(1)}
+  function setImageWithLoader(container,src,alt){
+    container.innerHTML='<div class="img-overlay"><div class="spinner"></div><img src="'+src+'" alt="'+alt+'"></div>';
+    var img=container.querySelector('img');
+    var spin=container.querySelector('.spinner');
+    img.onload=function(){img.classList.add('loaded');spin.style.display='none'};
+    img.onerror=function(){img.style.display='none';spin.style.display='none'};
+  }
 
   function enableAllControls(){
     [btnPlay,btnDetails,btnReset,btnResetModal,btnPlayAgain,modalClose,figureModalClose].forEach(function(el){
@@ -320,11 +333,16 @@ body{font-family:var(--font);background:url('assets/background.png') no-repeat c
         card.setAttribute('data-variant',state.variant);
         card.setAttribute('data-figure',n);
         if(n===state.figure) card.classList.add('selected');
+        var overlay=document.createElement('div');
+        overlay.className='img-overlay';
+        overlay.innerHTML='<div class="spinner"></div>';
         var img=document.createElement('img');
         img.src=getImagePath(state.gesture,state.variant,n);
         img.alt='Figure '+n;
-        img.onerror=function(){this.style.display='none'};
-        card.appendChild(img);
+        img.onerror=function(){this.style.display='none';var s=overlay.querySelector('.spinner');if(s)s.style.display='none'};
+        img.onload=function(){img.classList.add('loaded');var s=overlay.querySelector('.spinner');if(s)s.style.display='none'};
+        overlay.appendChild(img);
+        card.appendChild(overlay);
         var label=document.createElement('div');
         label.className='fig-label';
         label.textContent='#'+n;
@@ -376,8 +394,8 @@ body{font-family:var(--font);background:url('assets/background.png') no-repeat c
     var cpuGesture=gestures[Math.floor(Math.random()*3)];
     var cpuVariant=variants[Math.floor(Math.random()*3)];
     var cpuFigure=Math.floor(Math.random()*NUM_FIGURES)+1;
-    playerImg.innerHTML='<img src="'+getImagePath(state.gesture,state.variant,state.figure)+'" alt="Your hand">';
-    cpuImg.innerHTML='<img src="'+getImagePath(cpuGesture,cpuVariant,cpuFigure)+'" alt="CPU hand">';
+    setImageWithLoader(playerImg,getImagePath(state.gesture,state.variant,state.figure),'Your hand');
+    setImageWithLoader(cpuImg,getImagePath(cpuGesture,cpuVariant,cpuFigure),'CPU hand');
     playerLabel.textContent=capitalize(state.gesture)+' / '+capitalize(state.variant)+' / Fig#'+state.figure;
     cpuLabel.textContent=capitalize(cpuGesture)+' / '+capitalize(cpuVariant)+' / Fig#'+cpuFigure;
     var result=determineWinner(state.gesture,cpuGesture);
@@ -421,7 +439,7 @@ body{font-family:var(--font);background:url('assets/background.png') no-repeat c
 
   function showFigureDetails(){
     if(!state.gesture||!state.figure) return;
-    detailImg.innerHTML='<img src="'+getImagePath(state.gesture,state.variant,state.figure)+'" alt="Selected figure">';
+    setImageWithLoader(detailImg,getImagePath(state.gesture,state.variant,state.figure),'Selected figure');
     detailList.innerHTML='<div class="detail-row"><span class="detail-label">Gesture</span><span class="detail-value">'+capitalize(state.gesture)+'</span></div>'+
       '<div class="detail-row"><span class="detail-label">Variant</span><span class="detail-value">'+capitalize(state.variant)+'</span></div>'+
       '<div class="detail-row"><span class="detail-label">Figure</span><span class="detail-value">#'+state.figure+'</span></div>';
