@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Art of Lekkerrrr</title>
+    <link rel="icon" type="image/png" href="assets/app_icon.png" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="card hero">
+        <img src="assets/app_icon.png" alt="" />
+        <div>
+          <h1>Art of Lekkerrrr</h1>
+          <p>Enter the Hero Arena</p>
+        </div>
+        <button class="btn out" id="help">Shortcuts ?</button>
+      </header>
+      <div class="cols">
+        <main class="card big">
+          <h2 class="ct li">
+            <span class="ic li">&#9876;</span>Choose Your Hand
+          </h2>
+          <div class="pick">
+            <div>
+              <div class="lb">Gesture</div>
+              <div class="row3">
+                <button class="btn out g" data-g="rock">Rock</button
+                ><button class="btn out g" data-g="paper">Paper</button
+                ><button class="btn out g" data-g="scissor">Scissor</button>
+              </div>
+            </div>
+            <div>
+              <div class="lb">Variant</div>
+              <div class="row3">
+                <button class="btn out v" data-v="plain">Plain</button
+                ><button class="btn out v" data-v="light">Light</button
+                ><button class="btn out v" data-v="dark">Dark</button>
+              </div>
+            </div>
+          </div>
+          <div class="lb li">Figure</div>
+          <div class="figs" id="figs"></div>
+          <div class="row2" style="margin: 0">
+            <button class="btn fill" id="det">Details</button
+            ><button class="btn fill" id="fight">Fight!</button>
+          </div>
+        </main>
+        <aside class="side">
+          <section class="card">
+            <h2 class="ct"><span class="ic">&#128221;</span>Battle Rules</h2>
+            <div class="rule">
+              <span>&#9876;</span>
+              <div>
+                <b>Rock &#8594; Scissors</b
+                ><small>Rock crushes scissors.</small>
+              </div>
+            </div>
+            <div class="rule">
+              <span>&#9878;</span>
+              <div>
+                <b>Scissors &#8594; Paper</b><small>Scissors cuts paper.</small>
+              </div>
+            </div>
+            <div class="rule">
+              <span>&#128214;</span>
+              <div>
+                <b>Paper &#8594; Rock</b><small>Paper covers rock.</small>
+              </div>
+            </div>
+            <div class="rule">
+              <span>&#128170;</span>
+              <div>
+                <b>Same Gesture &#8594; Tie</b
+                ><small>Identical gestures cancel out.</small>
+              </div>
+            </div>
+          </section>
+          <section class="card">
+            <h2 class="ct"><span class="ic">&#127942;</span>Scoreboard</h2>
+            <div class="row3">
+              <div class="sc">
+                <small>Wins</small><b class="li" id="sw">0</b>
+              </div>
+              <div class="sc">
+                <small>Losses</small><b class="mg" id="sl">0</b>
+              </div>
+              <div class="sc">
+                <small>Ties</small><b class="cy" id="st">0</b>
+              </div>
+            </div>
+            <button class="btn out mg full" id="reset">Reset Scores</button>
+          </section>
+          <section class="card">
+            <h2 class="ct"><span class="ic">&#127894;</span>Trophy Room</h2>
+            <div class="tc">
+              <div class="badge" id="lv"></div>
+              <div class="grow">
+                <div class="rank" id="rank"></div>
+                <div class="bar"><i id="xpb"></i></div>
+                <small id="xpt"></small>
+              </div>
+            </div>
+            <button class="btn fill full" id="trophy" style="margin-top: 12px">
+              Open Trophy Room
+            </button>
+          </section>
+        </aside>
+      </div>
+    </div>
+    <script src="js/rewards-data.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/stats.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>
