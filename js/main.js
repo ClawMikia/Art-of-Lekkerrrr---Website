@@ -132,7 +132,7 @@ function help() {
   const n = el(
     "div",
     "",
-    `<h2 class="mt">Keyboard shortcuts</h2><dl class="keys"><dt>R / P / S</dt><dd>Rock / Paper / Scissor</dd><dt>1 / 2 / 3</dt><dd>Plain / Light / Dark</dd><dt>\u2190 / \u2192</dt><dd>Previous / next figure</dd><dt>Enter or F</dt><dd>Fight</dd><dt>D</dt><dd>Details</dd><dt>X</dt><dd>Reset scores</dd><dt>T</dt><dd>Trophy Room</dd><dt>A / X</dt><dd>Play again / reset scores (battle result)</dd><dt>Esc</dt><dd>Close a dialog</dd></dl><button class="btn out full" id="cl">Close</button>`,
+    `<h2 class="mt">Keyboard shortcuts</h2><div class="kgrid"><div class="scard"><div class="sk"><kbd>R</kbd> / <kbd>P</kbd> / <kbd>S</kbd></div><div class="sv">Rock / Paper / Scissor</div></div><div class="scard"><div class="sk"><kbd>1</kbd> / <kbd>2</kbd> / <kbd>3</kbd></div><div class="sv">Plain / Light / Dark</div></div><div class="scard"><div class="sk"><kbd>\u2190</kbd> / <kbd>\u2192</kbd></div><div class="sv">Previous / next figure</div></div><div class="scard"><div class="sk"><kbd>Enter</kbd> / <kbd>F</kbd></div><div class="sv">Fight</div></div><div class="scard"><div class="sk"><kbd>D</kbd></div><div class="sv">Details</div></div><div class="scard"><div class="sk"><kbd>X</kbd></div><div class="sv">Reset scores</div></div><div class="scard"><div class="sk"><kbd>T</kbd></div><div class="sv">Trophy Room</div></div><div class="scard"><div class="sk"><kbd>?</kbd></div><div class="sv">Shortcuts</div></div><div class="scard"><div class="sk"><kbd>Esc</kbd></div><div class="sv">Close a dialog</div></div></div><button class="btn out full" id="cl">Close</button>`,
   );
   const m = modal(n);
   $("#cl", n).onclick = () => {

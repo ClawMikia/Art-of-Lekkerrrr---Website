@@ -25,6 +25,8 @@ A browser-based Rock-Paper-Scissors game with a reward and trophy system.
 
 ## Controls
 
+### Main Game
+
 | Key | Action |
 |-----|--------|
 | R / P / S | Rock / Paper / Scissor |
@@ -34,7 +36,24 @@ A browser-based Rock-Paper-Scissors game with a reward and trophy system.
 | D | Details |
 | X | Reset scores |
 | T | Trophy Room |
-| A / X | Play again / reset scores (battle result) |
+| ? | Show shortcuts |
+| Esc | Close a dialog |
+
+### Battle Result
+
+| Key | Action |
+|-----|--------|
+| A | Play again |
+| X | Reset scores |
+
+### Trophy Room
+
+| Key | Action |
+|-----|--------|
+| ← / → | Previous / next tab |
+| 1 / 2 / 3 | All / Unlocked / Locked |
+| / | Search rewards |
+| B | Back to game |
 | Esc | Close a dialog |
 
 ## Tech Stack

@@ -111,10 +111,23 @@ $("#q").oninput = (e) => {
   list();
 };
 $("#back").onclick = go;
+$("#help").onclick = help;
 $("#rp").onclick = () => {
   Snd.nav();
   confirmReset();
 };
+function help() {
+  const n = el(
+    "div",
+    "",
+    `<h2 class="mt">Keyboard shortcuts</h2><div class="kgrid"><div class="scard"><div class="sk"><kbd>\u2190</kbd> / <kbd>\u2192</kbd></div><div class="sv">Previous / next tab</div></div><div class="scard"><div class="sk"><kbd>1</kbd> / <kbd>2</kbd> / <kbd>3</kbd></div><div class="sv">All / Unlocked / Locked</div></div><div class="scard"><div class="sk"><kbd>/</kbd></div><div class="sv">Search rewards</div></div><div class="scard"><div class="sk"><kbd>B</kbd></div><div class="sv">Back to game</div></div><div class="scard"><div class="sk"><kbd>Esc</kbd></div><div class="sv">Close a dialog</div></div></div><button class="btn out full" id="cl">Close</button>`,
+  );
+  const m = modal(n);
+  $("#cl", n).onclick = () => {
+    Snd.nav();
+    m.close();
+  };
+}
 LK.keys = {
   arrowleft: () => tab(ci - 1),
   arrowright: () => tab(ci + 1),
