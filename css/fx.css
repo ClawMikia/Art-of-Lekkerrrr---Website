@@ -1,0 +1,669 @@
+/* ===== Art of Lekkerrrr — 3D game-style FX layer =====
+   Pure visual layer: transforms/opacity/shadows only, so no layout position changes.
+   Disabled entirely by html.fx-off (toggle button, "E" key or OS reduced-motion). */
+
+:root {
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --depth: 0 1px 0 rgba(255, 255, 255, 0.07) inset, 0 -2px 0 rgba(0, 0, 0, 0.35) inset;
+}
+
+/* Cross-page transition (Chrome/Edge; ignored elsewhere) */
+@view-transition {
+  navigation: auto;
+}
+::view-transition-old(root) {
+  animation: vt-out 0.28s var(--ease-out) both;
+}
+::view-transition-new(root) {
+  animation: vt-in 0.45s var(--ease-out) both;
+}
+@keyframes vt-out {
+  to {
+    opacity: 0;
+    transform: scale(1.03);
+    filter: blur(6px);
+  }
+}
+@keyframes vt-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+    filter: blur(6px);
+  }
+}
+
+/* ---------- canvases / chrome ---------- */
+#fx-ambient,
+#fx-burst {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+}
+#fx-ambient {
+  z-index: 5;
+  mix-blend-mode: screen;
+}
+#fx-burst {
+  z-index: 100;
+}
+#fx-toggle {
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  z-index: 101;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--bd);
+  background: rgba(0, 0, 0, 0.55);
+  color: var(--cy);
+  font: 700 11px/1 inherit;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  opacity: 0.45;
+  backdrop-filter: blur(6px);
+  transition: opacity 0.2s, transform 0.25s var(--ease-back), box-shadow 0.25s;
+}
+#fx-toggle:hover {
+  opacity: 1;
+  transform: scale(1.12);
+  box-shadow: 0 0 14px rgba(0, 255, 255, 0.5);
+}
+html.fx-off #fx-toggle {
+  color: var(--th);
+}
+html.fx-off #fx-ambient,
+html.fx-off #fx-burst {
+  display: none;
+}
+
+/* vignette + soft light sweep over the background for depth */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% 40%, transparent 55%, rgba(0, 0, 0, 0.45) 100%),
+    radial-gradient(circle at var(--px, 50%) var(--py, 30%), rgba(0, 255, 255, 0.06), transparent 40%);
+}
+html.fx-off body::after {
+  display: none;
+}
+.wrap {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- 3D surfaces ---------- */
+.card,
+.btn,
+.fig,
+.rw,
+.sc,
+.rule,
+.scard,
+.ur,
+.comb,
+.badge,
+.dimg,
+.tab {
+  position: relative;
+  transform-style: preserve-3d;
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg))
+    translateY(var(--ty, 0px)) scale(var(--sc, 1));
+  transition:
+    transform 0.28s var(--ease-out),
+    box-shadow 0.3s,
+    background-color 0.2s,
+    border-color 0.2s,
+    color 0.2s,
+    filter 0.3s;
+  will-change: transform;
+}
+.card {
+  background-image: linear-gradient(160deg, rgba(255, 255, 255, 0.05), transparent 38%, rgba(0, 0, 0, 0.18));
+  box-shadow: var(--depth), 0 14px 30px -12px rgba(0, 0, 0, 0.7), 0 2px 0 rgba(0, 0, 0, 0.4);
+}
+.card.hover-lift,
+.rw:hover,
+.fig:hover,
+.sc:hover,
+.rule:hover,
+.scard:hover {
+  --ty: -3px;
+}
+.rw:hover,
+.rule:hover,
+.sc:hover,
+.scard:hover,
+.fig:hover {
+  box-shadow: 0 12px 22px -10px rgba(0, 0, 0, 0.8), 0 0 18px -4px color-mix(in srgb, var(--rc, var(--cy)) 55%, transparent);
+  border-color: color-mix(in srgb, var(--rc, var(--cy)) 55%, transparent);
+}
+.rw.got {
+  box-shadow: var(--depth), 0 8px 18px -10px color-mix(in srgb, var(--rc) 60%, black);
+}
+
+/* glossy glare that follows the pointer */
+.card::after,
+.rw::after,
+.fig::after,
+.comb::after,
+.sc::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    circle at var(--mx, 50%) var(--my, 0%),
+    rgba(255, 255, 255, 0.16),
+    transparent 55%
+  );
+  transition: opacity 0.3s;
+}
+.card[data-hot]::after,
+.rw[data-hot]::after,
+.fig[data-hot]::after,
+.comb[data-hot]::after,
+.sc[data-hot]::after {
+  opacity: 1;
+}
+
+/* ---------- buttons: chunky 3D keys ---------- */
+.btn {
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.55), 0 8px 14px -6px rgba(0, 0, 0, 0.7), var(--depth);
+  overflow: hidden;
+}
+.btn:hover {
+  --ty: -2px;
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.55), 0 14px 20px -8px rgba(0, 255, 255, 0.35), var(--depth);
+}
+.btn:active {
+  --ty: 2px;
+  --sc: 0.97;
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0.55), 0 2px 6px -2px rgba(0, 0, 0, 0.7), var(--depth);
+  transition-duration: 0.06s;
+}
+.btn.fill {
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.45), transparent 55%, rgba(0, 0, 0, 0.18));
+  box-shadow: 0 3px 0 #008b8b, 0 10px 18px -6px rgba(0, 255, 255, 0.45), var(--depth);
+}
+.btn.fill:hover {
+  box-shadow: 0 5px 0 #008b8b, 0 16px 26px -8px rgba(0, 255, 255, 0.6), var(--depth);
+}
+.btn.fill:active {
+  box-shadow: 0 0 0 #008b8b, 0 3px 8px -2px rgba(0, 255, 255, 0.4), var(--depth);
+}
+.btn.mgf {
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.4), transparent 55%, rgba(0, 0, 0, 0.18));
+  box-shadow: 0 3px 0 #a8326f, 0 10px 18px -6px rgba(255, 105, 180, 0.45), var(--depth);
+}
+/* shine sweep */
+.btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -60%;
+  width: 40%;
+  pointer-events: none;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: skewX(-20deg);
+  opacity: 0;
+}
+.btn:hover::before {
+  opacity: 1;
+  animation: shine 0.7s var(--ease-out);
+}
+@keyframes shine {
+  to {
+    left: 130%;
+  }
+}
+#fight {
+  animation: fight-pulse 2.4s ease-in-out infinite;
+}
+@keyframes fight-pulse {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0 rgba(0, 255, 255, 0));
+  }
+  50% {
+    filter: drop-shadow(0 0 12px rgba(0, 255, 255, 0.7));
+  }
+}
+
+/* selected states glow */
+.g.sel,
+.v.sel {
+  animation: sel-pop 0.45s var(--ease-back);
+  box-shadow: inset 0 0 0 2px var(--mg), 0 0 18px -2px rgba(255, 105, 180, 0.55), 0 3px 0 rgba(0, 0, 0, 0.55);
+}
+.fig.sel {
+  animation: sel-pop 0.45s var(--ease-back);
+  box-shadow: 0 0 22px -2px rgba(255, 105, 180, 0.6), 0 12px 20px -10px rgba(0, 0, 0, 0.8);
+}
+.fig.sel img {
+  filter: drop-shadow(0 8px 8px rgba(0, 0, 0, 0.55));
+  animation: float 3.2s ease-in-out infinite;
+}
+@keyframes sel-pop {
+  0% {
+    transform: scale(0.92);
+  }
+  60% {
+    transform: scale(1.05);
+  }
+}
+@keyframes float {
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+/* ---------- entrance choreography ---------- */
+.hero {
+  animation: slide-down 0.8s var(--ease-out) backwards;
+}
+.big {
+  animation: slide-left 0.85s var(--ease-out) 0.12s backwards;
+}
+.side-scroll > .card {
+  animation: slide-right 0.85s var(--ease-out) backwards;
+}
+.side-scroll > .card:nth-child(1) {
+  animation-delay: 0.2s;
+}
+.side-scroll > .card:nth-child(2) {
+  animation-delay: 0.32s;
+}
+.side-scroll > .card:nth-child(3) {
+  animation-delay: 0.44s;
+}
+.rule {
+  animation: slide-right 0.7s var(--ease-out) backwards;
+}
+.rule:nth-of-type(1) {
+  animation-delay: 0.35s;
+}
+.rule:nth-of-type(2) {
+  animation-delay: 0.42s;
+}
+.rule:nth-of-type(3) {
+  animation-delay: 0.49s;
+}
+.rule:nth-of-type(4) {
+  animation-delay: 0.56s;
+}
+.sc {
+  animation: pop-in 0.7s var(--ease-back) backwards;
+}
+.sc:nth-child(1) {
+  animation-delay: 0.55s;
+}
+.sc:nth-child(2) {
+  animation-delay: 0.63s;
+}
+.sc:nth-child(3) {
+  animation-delay: 0.71s;
+}
+.tside > * {
+  animation: slide-left 0.8s var(--ease-out) backwards;
+}
+.tside > *:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.tside > *:nth-child(3) {
+  animation-delay: 0.2s;
+}
+main > .grid {
+  animation: fade-up 0.6s var(--ease-out) 0.15s backwards;
+}
+.hero.tr {
+  animation-name: slide-down;
+}
+.big .pick .row3 .btn,
+.row2 > .btn {
+  animation: pop-in 0.6s var(--ease-back) 0.3s backwards;
+}
+.hero img {
+  animation: logo-in 1s var(--ease-back) 0.15s backwards;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 10px rgba(0, 255, 255, 0.25));
+}
+.hero h1 {
+  text-shadow: 0 0 18px rgba(0, 255, 255, 0.45), 0 3px 0 rgba(0, 0, 0, 0.5);
+  animation: fade-up 0.8s var(--ease-out) 0.25s backwards;
+}
+.hero p {
+  animation: fade-up 0.8s var(--ease-out) 0.4s backwards;
+}
+.badge {
+  box-shadow: 0 0 16px -2px rgba(255, 105, 180, 0.55), inset 0 0 10px rgba(255, 105, 180, 0.25);
+  animation: badge-in 0.9s var(--ease-back) 0.5s backwards, badge-glow 3s ease-in-out 1.4s infinite;
+}
+.bar i {
+  width: 0;
+  transform-origin: left center;
+  transition: width 0.9s var(--ease-out);
+  animation: grow 1s var(--ease-out) 0.5s backwards;
+  box-shadow: 0 0 8px var(--rc, var(--li));
+  background-image: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  background-size: 60px 100%;
+  background-repeat: no-repeat;
+  background-color: var(--rc, var(--li));
+}
+.bar i {
+  animation: grow 1s var(--ease-out) 0.5s backwards, bar-shine 2.8s linear 1.5s infinite;
+}
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-36px) scale(0.97);
+  }
+}
+@keyframes slide-left {
+  from {
+    opacity: 0;
+    transform: translateX(-48px) scale(0.97);
+  }
+}
+@keyframes slide-right {
+  from {
+    opacity: 0;
+    transform: translateX(48px) scale(0.97);
+  }
+}
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+@keyframes logo-in {
+  from {
+    opacity: 0;
+    transform: perspective(500px) rotateY(-180deg) scale(0.4);
+  }
+}
+@keyframes badge-in {
+  from {
+    opacity: 0;
+    transform: perspective(500px) rotateY(180deg) scale(0.3);
+  }
+}
+@keyframes badge-glow {
+  50% {
+    box-shadow: 0 0 26px 2px rgba(255, 105, 180, 0.8), inset 0 0 14px rgba(255, 105, 180, 0.4);
+  }
+}
+@keyframes grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes bar-shine {
+  from {
+    background-position: -60px 0;
+  }
+  to {
+    background-position: 400px 0;
+  }
+}
+
+/* score digit pop (class added by fx.js) */
+.sc b.bump,
+#lv.bump {
+  animation: bump 0.6s var(--ease-back);
+  display: inline-block;
+}
+#lv.bump {
+  display: grid;
+}
+@keyframes bump {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.7);
+    filter: drop-shadow(0 0 10px currentColor);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.sc b {
+  text-shadow: 0 0 14px currentColor, 0 3px 0 rgba(0, 0, 0, 0.6);
+}
+
+/* ---------- modals ---------- */
+.backdrop {
+  background: radial-gradient(circle at 50% 45%, rgba(0, 40, 40, 0.55), rgba(0, 0, 0, 0.78));
+  backdrop-filter: blur(6px) saturate(1.2);
+  animation: bd-in 0.35s var(--ease-out) both;
+  perspective: 1200px;
+}
+.backdrop.out {
+  pointer-events: none;
+  animation: bd-out 0.22s ease-in both;
+}
+.backdrop.out .modal {
+  animation: modal-out 0.22s ease-in both;
+}
+.modal {
+  animation: modal-in 0.55s var(--ease-back) both;
+  box-shadow:
+    0 30px 60px -10px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(0, 255, 255, 0.12),
+    0 0 40px -8px rgba(0, 255, 255, 0.3),
+    var(--depth);
+  background-image: linear-gradient(160deg, rgba(255, 255, 255, 0.07), transparent 35%);
+}
+.modal > *:not(.mt) {
+  animation: fade-up 0.5s var(--ease-out) backwards;
+}
+.modal > *:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.modal > *:nth-child(3) {
+  animation-delay: 0.18s;
+}
+.modal > *:nth-child(4) {
+  animation-delay: 0.26s;
+}
+.modal > *:nth-child(5) {
+  animation-delay: 0.34s;
+}
+.modal > *:nth-child(n + 6) {
+  animation-delay: 0.42s;
+}
+.modal .mt {
+  text-shadow: 0 0 14px rgba(0, 255, 255, 0.5);
+  animation: title-in 0.7s var(--ease-out) 0.08s backwards;
+}
+@keyframes bd-in {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0);
+  }
+}
+@keyframes bd-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: perspective(900px) translateY(50px) rotateX(-18deg) scale(0.82);
+  }
+}
+@keyframes modal-out {
+  to {
+    opacity: 0;
+    transform: perspective(900px) translateY(24px) rotateX(10deg) scale(0.92);
+  }
+}
+@keyframes title-in {
+  from {
+    opacity: 0;
+    letter-spacing: 0.4em;
+  }
+}
+
+/* battle dialog */
+.vsrow .comb:first-child {
+  animation: slide-left 0.75s var(--ease-back) 0.15s backwards;
+}
+.vsrow .comb:last-child {
+  animation: slide-right 0.75s var(--ease-back) 0.15s backwards;
+}
+.vs {
+  display: inline-block;
+  text-shadow: 0 0 16px currentColor;
+  animation: vs-slam 0.7s var(--ease-back) 0.5s backwards;
+}
+@keyframes vs-slam {
+  from {
+    opacity: 0;
+    transform: scale(4) rotate(-12deg);
+  }
+}
+.comb {
+  box-shadow: var(--depth), 0 14px 24px -12px rgba(0, 0, 0, 0.8);
+}
+.comb img,
+.dimg img {
+  filter: drop-shadow(0 12px 10px rgba(0, 0, 0, 0.6));
+  animation: float 3.4s ease-in-out infinite;
+}
+.vsrow .comb:last-child img {
+  animation-delay: -1.7s;
+}
+.res {
+  animation: res-slam 0.8s var(--ease-back) 0.65s backwards, res-glow 2.2s ease-in-out 1.5s infinite;
+  box-shadow: 0 0 28px -4px currentColor, inset 0 0 22px -10px currentColor;
+  text-shadow: 0 0 18px currentColor;
+  background: linear-gradient(180deg, color-mix(in srgb, currentColor 14%, transparent), transparent);
+}
+@keyframes res-slam {
+  from {
+    opacity: 0;
+    transform: scale(2.2) rotateX(40deg);
+  }
+}
+@keyframes res-glow {
+  50% {
+    box-shadow: 0 0 44px 2px currentColor, inset 0 0 28px -8px currentColor;
+  }
+}
+.ur {
+  animation: slide-right 0.6s var(--ease-out) backwards;
+  box-shadow: 0 0 18px -6px var(--rc), var(--depth);
+}
+.ur:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.ur:nth-child(3) {
+  animation-delay: 0.2s;
+}
+.ur:nth-child(n + 4) {
+  animation-delay: 0.3s;
+}
+.ur img,
+.dic {
+  filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.6));
+}
+.ur img {
+  animation: float 3s ease-in-out infinite;
+}
+.dic:not(.lock) {
+  animation: icon-in 0.9s var(--ease-back) 0.1s backwards, float 3.2s ease-in-out 1s infinite;
+}
+@keyframes icon-in {
+  from {
+    opacity: 0;
+    transform: perspective(600px) rotateY(180deg) scale(0.3);
+  }
+}
+.chip {
+  animation: pop-in 0.5s var(--ease-back) 0.3s backwards;
+}
+
+/* trophy grid cards: JS staggers entrance; this is the resting look */
+.rw {
+  transition-property: transform, box-shadow, border-color, background-color;
+}
+.rw img {
+  transition: transform 0.35s var(--ease-back);
+}
+.rw:hover img {
+  transform: scale(1.12) rotate(-4deg);
+}
+.tab.sel {
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
+  background: linear-gradient(90deg, rgba(0, 255, 255, 0.12), transparent);
+}
+.tab:hover {
+  --ty: 0px;
+  color: var(--cy);
+  transform: translateX(4px);
+}
+.fig,
+.rw,
+.tab {
+  contain: none;
+}
+
+/* ---------- off switch ---------- */
+html.fx-off *,
+html.fx-off *::before,
+html.fx-off *::after {
+  animation: none !important;
+  transition: none !important;
+}
+html.fx-off .card,
+html.fx-off .btn,
+html.fx-off .fig,
+html.fx-off .rw,
+html.fx-off .sc,
+html.fx-off .rule,
+html.fx-off .scard,
+html.fx-off .ur,
+html.fx-off .comb,
+html.fx-off .badge,
+html.fx-off .dimg,
+html.fx-off .tab {
+  transform: none !important;
+}
+html.fx-off .backdrop {
+  backdrop-filter: none;
+}
+html.fx-off .bar i {
+  transition: width 0.01s !important;
+}
+html.fx-off #fx-toggle {
+  transition: none !important;
+}
+@media (max-width: 640px) {
+  .card,
+  .rw,
+  .btn {
+    transform: none;
+  }
+}

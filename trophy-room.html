@@ -8,8 +8,9 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
+    <div class="vignette" aria-hidden="true"></div>
     <div class="wrap">
-      <header class="card hero tr">
+      <header class="card hero tr rv" style="--i: 0">
         <button class="back" id="back" aria-label="Back">&#8592;</button>
         <h1>Trophy Room</h1>
         <button class="link" id="help" aria-label="Shortcuts">Shortcuts ?</button
@@ -17,7 +18,7 @@
       </header>
       <div class="tcols">
         <aside class="tside">
-          <div class="card tc">
+          <div class="card tc rv" style="--i: 1" data-tilt="8">
             <div
               class="badge"
               id="lv"
@@ -29,8 +30,8 @@
               <small id="xpt"></small>
             </div>
           </div>
-          <nav class="card tabs" id="tabs"></nav>
-          <div class="card">
+          <nav class="card tabs rv" style="--i: 2" id="tabs"></nav>
+          <div class="card rv" style="--i: 3">
             <div class="seg" id="seg">
               <button class="btn out" data-fl="all">All</button
               ><button class="btn out" data-fl="unlocked">Unlocked</button
@@ -59,7 +60,9 @@
       </div>
     </div>
     <script src="js/rewards-data.js"></script>
+    <script src="js/fx.js"></script>
     <script src="js/common.js"></script>
+    <script src="js/ui.js"></script>
     <script src="js/stats.js"></script>
     <script src="js/trophy.js"></script>
   </body>

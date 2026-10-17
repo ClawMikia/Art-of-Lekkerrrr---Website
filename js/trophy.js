@@ -9,7 +9,7 @@ const fmt = (ms) =>
   });
 const go = () => {
   Snd.nav();
-  location.href = "index.html";
+  UI.go("index.html");
 };
 function tabsel() {
   $$(".tab").forEach((b, i) => b.classList.toggle("sel", i === ci));
@@ -40,9 +40,9 @@ function list() {
     );
   $("#empty").hidden = items.length > 0;
   $("#grid").innerHTML = items
-    .map((r) => {
+    .map((r, i) => {
       const g = RM.isU(r);
-      return `<button class="rw${g ? " got" : ""}" style="--rc:${RC[r.rarity]}" data-id="${r.id}"><img loading="lazy" src="assets/rewards/${r.icon}" alt=""><div><b>${r.title}</b><p>${r.desc}</p><div class="pb">${g ? "" : `<div class="bar"><i style="width:${RM.frac(r) * 100}%"></i></div>`}<span class="${g ? "ok" : ""}">${g ? "Unlocked " + fmt(RM.at(r)) : RM.progress(r) + " / " + r.target}</span></div></div></button>`;
+      return `<button class="rw${g ? " got" : ""}" style="--rc:${RC[r.rarity]};--i:${Math.min(i, 22)}" data-id="${r.id}"><img loading="lazy" src="assets/rewards/${r.icon}" alt=""><div><b>${r.title}</b><p>${r.desc}</p><div class="pb">${g ? "" : `<div class="bar"><i style="width:${RM.frac(r) * 100}%"></i></div>`}<span class="${g ? "ok" : ""}">${g ? "Unlocked " + fmt(RM.at(r)) : RM.progress(r) + " / " + r.target}</span></div></div></button>`;
     })
     .join("");
 }
@@ -55,6 +55,7 @@ function detail(r) {
     `<h2 class="mt">${KIND[r.cat][2]}</h2><img class="dic${g ? "" : " lock"}" src="assets/rewards/${r.icon}" alt=""><h3 style="color:${g ? RC[r.rarity] : "var(--tp)"}">${r.title}</h3><span class="chip" style="--rc:${RC[r.rarity]}">${RN[r.rarity]}</span><p class="dd">${r.desc}</p>${g ? "" : `<div class="bar" style="--rc:${RC[r.rarity]}"><i style="width:${RM.frac(r) * 100}%"></i></div>`}<p class="st${g ? " ok" : ""}">${g ? `Unlocked ${fmt(RM.at(r))} \u2022 +${x} XP` : `${RM.progress(r)} / ${r.target} \u2022 +${x} XP when unlocked`}</p><button class="btn out full" id="cl">Close</button>`,
   );
   const m = modal(n);
+  if (g) UI.rewardFX(n, [], [], false);
   $("#cl", n).onclick = () => {
     Snd.nav();
     m.close();

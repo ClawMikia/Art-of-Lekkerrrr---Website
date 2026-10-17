@@ -14,6 +14,9 @@ A browser-based Rock-Paper-Scissors game with a reward and trophy system.
 - Trophy room to view and filter rewards
 - Keyboard shortcuts for fast play
 - Responsive design
+- **Neon Hero Arena+** 3D-style UI: glass panels, pointer-tilt cards with specular highlight, 3D coverflow figure picker, camera-style page transitions, popping dialogs
+- Canvas particle engine: ambient fireflies with mouse parallax, battle clash (sparks, shockwave, screen shake, confetti / smoke / shimmer rings), reward bursts with floating +XP, click sparkles
+- Honors `prefers-reduced-motion`; particle counts scale down on small screens and hidden tabs pause rendering
 
 ## How to Play
 
@@ -60,7 +63,7 @@ A browser-based Rock-Paper-Scissors game with a reward and trophy system.
 
 - HTML5
 - CSS3
-- Vanilla JavaScript
+- Vanilla JavaScript (no build, no CDN, no 3D engine; CSS perspective + canvas 2D)
 
 ## Files
 
@@ -68,6 +71,8 @@ A browser-based Rock-Paper-Scissors game with a reward and trophy system.
 - `trophy-room.html` — Trophy / rewards gallery
 - `css/style.css` — Styles
 - `js/common.js` — Shared utilities and modal system
+- `js/fx.js` — Canvas particle engine (`FX`)
+- `js/ui.js` — Tilt, ripples, number ticks, page transitions, battle/reward choreography (`UI`)
 - `js/stats.js` — Statistics and reward logic
 - `js/rewards-data.js` — Reward definitions
 - `js/main.js` — Main game flow

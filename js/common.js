@@ -60,6 +60,7 @@ function modal(node, onDismiss, keys = {}) {
       LK.stack.splice(i, 1);
       bd.remove();
       document.body.classList.toggle("noscroll", LK.stack.length > 0);
+      if (typeof UI !== "undefined") UI.modalClosed(LK.stack.length);
       onDismiss && onDismiss();
     },
   };
@@ -69,7 +70,8 @@ function modal(node, onDismiss, keys = {}) {
   LK.stack.push(m);
   document.body.append(bd);
   document.body.classList.add("noscroll");
-  node.focus();
+  if (typeof UI !== "undefined") UI.modalOpen(bd, node);
+  node.focus({ preventScroll: true });
   return m;
 }
 document.addEventListener("keydown", (e) => {
